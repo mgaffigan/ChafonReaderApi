@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32328.378
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rmg.Chafon.ReaderApi", "Rmg.Chafon.ReaderApi\Rmg.Chafon.ReaderApi.csproj", "{EA75BA82-4814-4E2A-AA19-E6BB730D91F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{B5549BA5-136A-4ABD-82D7-0A1FA3C04459}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EA75BA82-4814-4E2A-AA19-E6BB730D91F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA75BA82-4814-4E2A-AA19-E6BB730D91F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA75BA82-4814-4E2A-AA19-E6BB730D91F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA75BA82-4814-4E2A-AA19-E6BB730D91F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5549BA5-136A-4ABD-82D7-0A1FA3C04459}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5549BA5-136A-4ABD-82D7-0A1FA3C04459}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5549BA5-136A-4ABD-82D7-0A1FA3C04459}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5549BA5-136A-4ABD-82D7-0A1FA3C04459}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {92011E5B-7ECD-4B25-A2E7-817E2C8D8CA4}
+	EndGlobalSection
+EndGlobal
