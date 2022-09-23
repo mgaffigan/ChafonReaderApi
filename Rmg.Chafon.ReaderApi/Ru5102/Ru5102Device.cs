@@ -44,7 +44,7 @@ namespace Rmg.Chafon.ReaderApi.Ru5102
 
         #endregion
 
-        public async Task InventoryAsync(TidAddress? tidAddress, Action<string> handleTag, CancellationToken ct = default)
+        public async Task InventoryAsync(AddressSegment? tidAddress, Action<string> handleTag, CancellationToken ct = default)
         {
             await Port.SendReceiveUntilAsync(new InventoryRequest(tidAddress), resp =>
             {
@@ -56,7 +56,52 @@ namespace Rmg.Chafon.ReaderApi.Ru5102
                 return !resp.ScanFinished;
             }, ct);
         }
+
+        public async Task<byte[]> ReadMemoryAsync(
+    string tag, uint password,
+    MemoryBank bank, AddressSegment seg,
+    CancellationToken ct = default
+)
+        {
+            var resp = await TryReadMemoryAsync(tag, password, bank, seg, ct);
+            if (!resp.Success)
+            {
+                throw new NakException("Tag did not respond");
+            }
+            return resp.Data;
+        }
+
+        public async Task<ReadResult> TryReadMemoryAsync(
+            string tag, uint password,
+            MemoryBank bank, AddressSegment seg,
+            CancellationToken ct = default
+        )
+        {
+            var resp = await Port.SendReceiveAsync(new ReadRequest(tag, password, bank, seg), ct);
+            return new ReadResult(resp.Status == ReadStatus.Success, resp.Data);
+        }
     }
 
-    public record TidAddress(int Offset = 2, int Length = 4);
+    public enum MemoryBank : byte
+    {
+        Reserved = 0,
+        EPC = 1,
+        TID = 2,
+        User = 3,
+    }
+
+    public record AddressSegment(int Offset, int Length);
+
+    public record ReadResult(bool Success, byte[] Data);
+
+    [Serializable]
+    public class NakException : Exception
+    {
+        public NakException() { }
+        public NakException(string message) : base(message) { }
+        public NakException(string message, Exception inner) : base(message, inner) { }
+        protected NakException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    }
 }

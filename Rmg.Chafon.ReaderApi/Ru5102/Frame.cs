@@ -101,7 +101,7 @@ namespace Rmg.Chafon.ReaderApi.Ru5102
     // if subtype != 0xfb, Card Count
     // pOUcharIDList
     //   { {length} {tagdata} }
-    internal record InventoryRequest(TidAddress? TidAddress)
+    internal record InventoryRequest(AddressSegment? TidAddress)
         : Request<InventoryResponse>(0x01)
     {
         public override InventoryResponse ParseResponse(ReadOnlySpan<byte> data)
@@ -148,4 +148,69 @@ namespace Rmg.Chafon.ReaderApi.Ru5102
     }
 
     internal record InventoryResponse(bool ScanFinished, IReadOnlyList<string> Tags) : Response();
+
+    internal record ReadRequest
+    (
+        string Tag, uint Password,
+        MemoryBank BankToRead, AddressSegment SegmentToRead
+    ) : Request<ReadResponse>(0x02)
+    {
+        public override void Serialize(MemoryStream wr)
+        {
+            //           0  1 2  3  4  5  6 7 8 9
+            // 0e0002   01 0001 00 04 04 00000000   943b
+
+            // tag ID
+            var tagData = Convert.FromHexString(Tag);
+            if ((tagData.Length % 2) != 0)
+            {
+                throw new InvalidOperationException("EPC must be two-byte multiple");
+            }
+            wr.WriteByte(checked((byte)(tagData.Length / 2)));
+            wr.Write(tagData);
+
+            // read from address
+            wr.WriteByte((byte)BankToRead);
+            wr.WriteByte(checked((byte)SegmentToRead.Offset));
+            if ((SegmentToRead.Length % 4) != 0)
+            {
+                throw new InvalidOperationException("SegmentToRead Length must be multiple of 4");
+            }
+            wr.WriteByte(checked((byte)(SegmentToRead.Length / 4)));
+            wr.WriteByte((byte)((Password >> 0) & 0xff));
+            wr.WriteByte((byte)((Password >> 8) & 0xff));
+            wr.WriteByte((byte)((Password >> 16) & 0xff));
+            wr.WriteByte((byte)((Password >> 24) & 0xff));
+
+            // Mask
+            // Not implemented
+            //if (mask)
+            //{
+            //    wr.WriteByte(mask address);
+            //    wr.WriteByte(mask length);
+            //}
+        }
+
+        public override void ValidateResponseSize(int size)
+        {
+            if (size < 1)
+            {
+                throw new InvalidOperationException();
+            }
+        }
+
+        public override ReadResponse ParseResponse(ReadOnlySpan<byte> data)
+        {
+            var status = (ReadStatus)data[0];
+            return new ReadResponse(status, data.Slice(1).ToArray());
+        }
+    }
+
+    internal record ReadResponse(ReadStatus Status, byte[] Data) : Response();
+
+    internal enum ReadStatus
+    {
+        Success = 0,
+        Nak = 0xfc,
+    }
 }

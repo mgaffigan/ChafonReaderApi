@@ -32,4 +32,5 @@ contain more than 256 bytes of data.
 | Command | Notes |
 |--|--|
 | 0x01 - Inventory | Produces multiple responses.  Responses 3 and 4 are "partial".  1, 2, and 0xfb are "last messages".  0xfb represents "No tags found".  Other values are unknown |
+| 0x02 - Read | Read a specific tag memory |
 | 0x21 - Get Reader Information | Gets version, frequency, and other information |
